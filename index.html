@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apple Rush — Edición Color</title>
+<style>
+:root{
+ --bg:#0b1020;--panel:#151c30;--panel2:#1d2740;--text:#f7f9ff;--muted:#aab4ca;
+ --green:#65D66F;--yellow:#FFD166;--red:#F04444;--blue:#4CC9F0;--purple:#A855F7;--pink:#FF4D8D;
+ --snake:#65D66F;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;color:var(--text);font-family:Arial,Helvetica,sans-serif;
+ background:
+ radial-gradient(circle at 8% 8%,#4CC9F033 0 10%,transparent 28%),
+ radial-gradient(circle at 92% 10%,#A855F733 0 10%,transparent 28%),
+ radial-gradient(circle at 50% 100%,#65D66F22 0 12%,transparent 32%),var(--bg);
+}
+button{border:0;border-radius:13px;padding:13px 21px;font-weight:800;font-size:15px;cursor:pointer;transition:.18s}
+button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.primary{color:#07110a;background:linear-gradient(135deg,#65D66F,#32b85a);box-shadow:0 8px 25px #65D66F33}
+.secondary{color:var(--text);background:#273149;border:1px solid #3a4762}
+.danger{color:#fff;background:linear-gradient(135deg,#F04444,#B92E3A)}
+.app{width:min(1050px,100%);margin:auto;padding:20px 16px 40px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}.logo{font-size:42px;filter:drop-shadow(0 0 12px #F0444480)}
+h1{margin:0;font-size:31px;background:linear-gradient(90deg,#65D66F,#4CC9F0,#A855F7,#FF4D8D);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{color:var(--muted);font-size:13px}
+.dots{display:flex;gap:7px}.dots i{width:9px;height:9px;border-radius:50%}.dots i:nth-child(1){background:#65D66F}.dots i:nth-child(2){background:#4CC9F0}.dots i:nth-child(3){background:#FF4D8D}.dots i:nth-child(4){background:#FFD166}
+.screen{display:none}.screen.active{display:block}
+.card{background:linear-gradient(145deg,#151c30f7,#202b45f2);border:1px solid #3a4762;border-radius:22px;box-shadow:0 18px 55px #0007}
+.hero{text-align:center;padding:38px 20px}
+.hero h2{font-size:clamp(38px,8vw,58px);margin:3px 0 10px;letter-spacing:2px}
+.hero p{max-width:650px;margin:0 auto 20px;color:var(--muted);line-height:1.6}
+.apple-big{font-size:78px;filter:drop-shadow(0 8px 15px #0008)}
+.record{display:inline-flex;gap:9px;align-items:center;background:#252f47;padding:10px 15px;border-radius:12px;border:1px solid #3c4964;margin-bottom:17px}
+.record b{color:var(--yellow)}
+.custom{max-width:600px;margin:0 auto 18px;padding:18px;border-radius:17px;background:#0f1628cc;border:1px solid #3a4762}
+.custom h3{margin:0 0 5px}.custom p{margin:0 0 14px;color:var(--muted);font-size:13px}
+.colors{display:flex;justify-content:center;gap:11px;flex-wrap:wrap}
+.swatch{width:37px;height:37px;padding:0;border-radius:50%;background:var(--c);border:3px solid transparent;box-shadow:0 0 0 2px #fff2}
+.swatch.selected{border-color:#fff;box-shadow:0 0 0 3px var(--c),0 0 18px var(--c)}
+.custom-picker{display:inline-flex;align-items:center;gap:9px;margin-top:14px;color:var(--muted);font-size:12px}
+.custom-picker input{width:45px;height:30px;border:0;background:none;padding:0;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.stat{padding:13px;text-align:center;background:#151c30dd;border:1px solid #33415b;border-radius:15px}
+.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:24px;color:var(--yellow)}
+.pausebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.game-wrap{display:flex;justify-content:center}
+.board{width:min(86vw,650px);aspect-ratio:1;display:grid;grid-template-columns:repeat(20,1fr);background:#0e1422;border:2px solid #43516d;border-radius:17px;overflow:hidden;box-shadow:0 0 30px #000b}
+.cell{border:1px solid #fff06;position:relative}
+.snake{position:absolute;inset:2px;background:var(--snake);border-radius:5px;box-shadow:0 0 9px color-mix(in srgb,var(--snake),transparent 55%)}
+.head{filter:brightness(1.25);border-radius:7px}
+.apple{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,2.5vw,25px);filter:drop-shadow(0 2px 4px #0009)}
+.controls{display:flex;justify-content:center;gap:9px;margin-top:12px}
+.instructions{text-align:center;color:var(--muted);font-size:12px;margin-top:12px}
+.overlay{position:fixed;inset:0;background:#02040bcc;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.overlay.show{display:flex}.modal{width:min(390px,100%);padding:28px;text-align:center}.modal h2{font-size:36px;margin:0 0 8px}.modal p{color:var(--muted)}.final{font-size:55px;font-weight:900;color:var(--yellow);margin:8px}
+.modal button{margin:5px}
+@media(max-width:600px){.app{padding:14px 9px}.dots{display:none}.stats{gap:7px}.stat{padding:10px 2px}.stat strong{font-size:20px}.hero{padding:28px 13px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">🍎</div><div><h1>Apple Rush</h1><div class="tag">Snake arcade moderno · Edición Color</div></div></div>
+ <div class="dots"><i></i><i></i><i></i><i></i></div>
+</header>
+
+<section id="home" class="screen active">
+ <div class="card hero">
+  <div class="apple-big">🍎</div>
+  <h2>APPLE RUSH</h2>
+  <p>Come manzanas, suma puntos y sobrevive. Cada manzana que comes aumenta en una la cantidad de manzanas del tablero.</p>
+  <div class="record">🏆 Récord actual: <b id="homeRecord">0</b></div>
+  <div class="custom">
+   <h3>🎨 Personaliza tu serpiente</h3>
+   <p>Selecciona un color o crea uno propio.</p>
+   <div class="colors">
+    <button class="swatch selected" data-color="#65D66F" style="--c:#65D66F" aria-label="Verde"></button>
+    <button class="swatch" data-color="#4CC9F0" style="--c:#4CC9F0" aria-label="Azul"></button>
+    <button class="swatch" data-color="#A855F7" style="--c:#A855F7" aria-label="Morado"></button>
+    <button class="swatch" data-color="#FF4D8D" style="--c:#FF4D8D" aria-label="Rosado"></button>
+    <button class="swatch" data-color="#FFD166" style="--c:#FFD166" aria-label="Amarillo"></button>
+    <button class="swatch" data-color="#00D084" style="--c:#00D084" aria-label="Turquesa"></button>
+    <button class="swatch" data-color="#FF7A00" style="--c:#FF7A00" aria-label="Naranja"></button>
+   </div>
+   <label class="custom-picker">Color personalizado
+    <input id="customColor" type="color" value="#65D66F">
+   </label>
+  </div>
+  <button class="primary" onclick="startGame()">JUGAR</button>
+ </div>
+</section>
+
+<section id="game" class="screen">
+ <div class="pausebar"><span class="tag">WASD / Flechas para moverte</span><button class="secondary" onclick="pauseGame()">PAUSA</button></div>
+ <div class="stats">
+  <div class="stat"><small>PUNTOS</small><strong id="score">0</strong></div>
+  <div class="stat"><small>MANZANAS</small><strong id="appleCount">1</strong></div>
+  <div class="stat"><small>RÉCORD</small><strong id="record">0</strong></div>
+ </div>
+ <div class="game-wrap"><div id="board" class="board"></div></div>
+ <div class="controls">
+  <button class="secondary" onclick="changeDir('up')">▲</button>
+ </div>
+ <div class="controls">
+  <button class="secondary" onclick="changeDir('left')">◀</button>
+  <button class="secondary" onclick="changeDir('down')">▼</button>
+  <button class="secondary" onclick="changeDir('right')">▶</button>
+ </div>
+ <div class="instructions">La serpiente no puede girar directamente hacia la dirección contraria.</div>
+</section>
+</div>
+
+<div id="pause" class="overlay"><div class="card modal">
+ <h2>PAUSA</h2><p>El movimiento está detenido.</p>
+ <button class="primary" onclick="resumeGame()">CONTINUAR</button>
+ <button class="secondary" onclick="restartGame()">REINICIAR</button>
+ <button class="secondary" onclick="goHome()">SALIR</button>
+</div></div>
+
+<div id="over" class="overlay"><div class="card modal">
+ <h2>GAME OVER</h2><div class="final" id="finalScore">0</div><p id="newRecord"></p>
+ <button class="primary" onclick="restartGame()">JUGAR DE NUEVO</button>
+ <button class="secondary" onclick="goHome()">INICIO</button>
+</div></div>
+
+<script>
+const N=20, recordKey='appleRushRecord', colorKey='appleRushSnakeColor';
+let snake=[], apples=[], score=0, dir='right', nextDir='right', timer=null, paused=false;
+let snakeColor=localStorage.getItem(colorKey)||'#65D66F';
+document.documentElement.style.setProperty('--snake',snakeColor);
+
+function getRecord(){return Number(localStorage.getItem(recordKey)||0)}
+function setColor(color, el){
+ snakeColor=color;localStorage.setItem(colorKey,color);
+ document.documentElement.style.setProperty('--snake',color);
+ document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('selected'));
+ if(el) el.classList.add('selected');
+ const picker=document.getElementById('customColor'); if(picker) picker.value=color;
+}
+document.querySelectorAll('.swatch').forEach(b=>b.addEventListener('click',()=>setColor(b.dataset.color,b)));
+document.getElementById('customColor').addEventListener('input',e=>setColor(e.target.value));
+
+function screen(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function startGame(){
+ screen('game');score=0;dir='right';nextDir='right';paused=false;
+ snake=[{x:9,y:10},{x:8,y:10},{x:7,y:10}];apples=[freeCell()];
+ update();draw();clearInterval(timer);timer=setInterval(tick,125);
+}
+function freeCell(){
+ let p;
+ do{p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}
+ while(snake.some(s=>s.x===p.x&&s.y===p.y)||apples.some(a=>a.x===p.x&&a.y===p.y));
+ return p;
+}
+function changeDir(d){
+ const opposite={up:'down',down:'up',left:'right',right:'left'};
+ if(d!==opposite[dir])nextDir=d;
+}
+document.addEventListener('keydown',e=>{
+ const m={ArrowUp:'up',w:'up',ArrowDown:'down',s:'down',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right'};
+ if(m[e.key]){e.preventDefault();changeDir(m[e.key])}
+ if(e.key===' '&&document.getElementById('game').classList.contains('active'))pauseGame();
+});
+function tick(){
+ if(paused)return;dir=nextDir;
+ const h={x:snake[0].x,y:snake[0].y};
+ if(dir==='up')h.y--;if(dir==='down')h.y++;if(dir==='left')h.x--;if(dir==='right')h.x++;
+ if(h.x<0||h.x>=N||h.y<0||h.y>=N||snake.some(s=>s.x===h.x&&s.y===h.y)){gameOver();return}
+ snake.unshift(h);
+ const hit=apples.findIndex(a=>a.x===h.x&&a.y===h.y);
+ if(hit>=0){
+   apples.splice(hit,1);score++;
+   apples.push(freeCell());apples.push(freeCell());
+ }else snake.pop();
+ update();draw();
+}
+function update(){
+ const r=getRecord();
+ document.getElementById('score').textContent=score;
+ document.getElementById('appleCount').textContent=apples.length;
+ document.getElementById('record').textContent=r;
+ document.getElementById('homeRecord').textContent=r;
+}
+function draw(){
+ board.innerHTML='';
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+  const c=document.createElement('div');c.className='cell';
+  const si=snake.findIndex(s=>s.x===x&&s.y===y);
+  if(si>=0){const q=document.createElement('div');q.className='snake '+(si===0?'head':'');c.appendChild(q)}
+  if(apples.some(a=>a.x===x&&a.y===y)){const q=document.createElement('div');q.className='apple';q.textContent='🍎';c.appendChild(q)}
+  board.appendChild(c);
+ }
+}
+function pauseGame(){if(!paused){paused=true;document.getElementById('pause').classList.add('show')}}
+function resumeGame(){paused=false;document.getElementById('pause').classList.remove('show')}
+function restartGame(){document.getElementById('pause').classList.remove('show');document.getElementById('over').classList.remove('show');startGame()}
+function gameOver(){
+ clearInterval(timer);paused=true;const old=getRecord();let nr=false;
+ if(score>old){localStorage.setItem(recordKey,score);nr=true}
+ document.getElementById('finalScore').textContent=score;
+ document.getElementById('newRecord').textContent=nr?'🎉 ¡NUEVO RÉCORD!':'Récord: '+getRecord();
+ document.getElementById('over').classList.add('show');update();
+}
+function goHome(){clearInterval(timer);document.getElementById('pause').classList.remove('show');document.getElementById('over').classList.remove('show');screen('home');update()}
+setColor(snakeColor);
+update();
+</script>
+</body>
+</html>
